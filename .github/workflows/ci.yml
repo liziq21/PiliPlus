@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  flutter_test:
+    name: Run Flutter Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch }}
+          fetch-depth: 0
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+      - run: flutter pub get
+      - run: flutter --version
+      - run: flutter analyze
+      - run: flutter test
+
+  build_iOSApp:
+    name: Build Flutter App (iOS)
+    needs: [flutter_test]
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch }}
+          fetch-depth: 0
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version-file: pubspec.yaml
+      
+      - name: 更新版本号
+        run: |
+          version_name=$(yq e '.version' pubspec.yaml | cut -d "+" -f 1)
+          sed -i '' "s/version: .*/version: $version_name+$(git rev-list --count HEAD)/" pubspec.yaml
+
+      - run: flutter pub get
+      - run: flutter clean
+      - run: |
+          chmod +x lib/scripts/build.sh
+          lib/scripts/build.sh
+          flutter build ios --release --no-codesign
+          ln -sf ./build/ios/iphoneos Payload
+          zip -r9 ios-release-no-sign.ipa Payload/runner.app
+
+      - name: Upload ios release
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-release
+          path: ios-release-no-sign.ipa
