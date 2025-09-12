@@ -38,6 +38,7 @@ jobs:
         run: |
           chmod +x lib/scripts/build.sh
           lib/scripts/build.sh
+          flutter clean
           flutter build ios --release --no-codesign 
           ln -sf ./build/ios/iphoneos Payload
           zip -r9 ios-release-no-sign.ipa Payload/runner.app
