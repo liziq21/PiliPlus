@@ -34,7 +34,6 @@ import 'package:flutter/foundation.dart';
 
 /// view层根据 status 判断渲染逻辑
 class VideoHttp {
-  // static bool enableRcmdDynamic = Pref.enableRcmdDynamic;
   static RegExp zoneRegExp = RegExp(Pref.banWordForZone, caseSensitive: false);
   static bool enableFilter = zoneRegExp.pattern.isNotEmpty;
 
@@ -133,7 +132,6 @@ class VideoHttp {
         if (i['card_goto'] != 'ad_av' &&
             i['card_goto'] != 'ad_web_s' &&
             i['ad_info'] == null &&
-            // (!enableRcmdDynamic ? i['card_goto'] != 'picture' : true) &&
             (i['args'] != null &&
                 !GlobalData().blackMids.contains(i['args']['up_id']))) {
           if (enableFilter &&
@@ -806,13 +804,20 @@ class VideoHttp {
       'up_mid': upMid,
     });
     var res = await Request().get(Api.aiConclusion, queryParameters: params);
-    if (res.data['code'] == 0 && res.data['data']['code'] == 0) {
+    final code = res.data['code'];
+    final dataCode = res.data['data']?['code'];
+    if (code == 0 && dataCode == 0) {
       return {
         'status': true,
         'data': AiConclusionData.fromJson(res.data['data']),
       };
     } else {
-      return {'status': false, 'msg': res.data['message']};
+      final handling = code == 0 && dataCode == 1;
+      return {
+        'status': false,
+        'msg': res.data['message'],
+        'handling': handling,
+      };
     }
   }
 

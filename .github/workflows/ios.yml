@@ -1,10 +1,14 @@
 name: Build for iOS
 
 on:
-  push:
-    branches: [main]
   pull_request:
-    branches: [main]
+        types:
+          - opened
+          - synchronize
+          - reopened
+          - ready_for_review
+        paths-ignore:
+          - '**.md'
   workflow_dispatch:
     inputs:
       branch:
@@ -27,7 +31,6 @@ jobs:
         with:
           channel: stable
           flutter-version-file: pubspec.yaml
-      - run: flutter pub get
 
       - name: 更新版本号
         run: |
@@ -38,7 +41,6 @@ jobs:
         run: |
           chmod +x lib/scripts/build.sh
           lib/scripts/build.sh
-          flutter clean
           flutter build ios --release --no-codesign 
           ln -sf ./build/ios/iphoneos Payload
           zip -r9 ios-release-no-sign.ipa Payload/runner.app

@@ -26,10 +26,8 @@ class MainApp extends StatefulWidget {
   State<MainApp> createState() => _MainAppState();
 }
 
-class _MainAppState
-    extends State<MainApp>
-    with RouteAware, WidgetsBindingObserver
-{
+class _MainAppState extends State<MainApp>
+    with RouteAware, WidgetsBindingObserver {
   final MainController _mainController = Get.put(MainController());
 
   @override
@@ -98,7 +96,54 @@ class _MainAppState
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final padding = MediaQuery.viewPaddingOf(context);
-    
+    useBottomNav =
+        !_mainController.useSideBar && MediaQuery.sizeOf(context).isPortrait;
+    Widget? bottomNav = useBottomNav
+        ? _mainController.navigationBars.length > 1
+              ? _mainController.enableMYBar
+                    ? Obx(
+                        () => NavigationBar(
+                          maintainBottomViewPadding: true,
+                          onDestinationSelected: _mainController.setIndex,
+                          selectedIndex: _mainController.selectedIndex.value,
+                          destinations: _mainController.navigationBars
+                              .map(
+                                (e) => NavigationDestination(
+                                  label: e.label,
+                                  icon: _buildIcon(type: e),
+                                  selectedIcon: _buildIcon(
+                                    type: e,
+                                    selected: true,
+                                  ),
+                                ),
+                              )
+                              .toList(),
+                        ),
+                      )
+                    : Obx(
+                        () => BottomNavigationBar(
+                          currentIndex: _mainController.selectedIndex.value,
+                          onTap: _mainController.setIndex,
+                          iconSize: 16,
+                          selectedFontSize: 12,
+                          unselectedFontSize: 12,
+                          type: BottomNavigationBarType.fixed,
+                          items: _mainController.navigationBars
+                              .map(
+                                (e) => BottomNavigationBarItem(
+                                  label: e.label,
+                                  icon: _buildIcon(type: e),
+                                  activeIcon: _buildIcon(
+                                    type: e,
+                                    selected: true,
+                                  ),
+                                ),
+                              )
+                              .toList(),
+                        ),
+                      )
+              : const SizedBox.shrink()
+        : null;
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (bool didPop, Object? result) {
@@ -242,9 +287,9 @@ class _MainAppState
               ],
             ),
           ),
-          bottomNavigationBar: 
-            _mainController.hideTabBar
-                ? StreamBuilder(
+          bottomNavigationBar: useBottomNav
+              ? _mainController.hideTabBar
+                    ? StreamBuilder(
                         stream: _mainController.bottomBarStream?.stream
                             .distinct(),
                         initialData: true,
@@ -256,61 +301,13 @@ class _MainAppState
                             child: bottomNav,
                           );
                         },
-                )
-                : _buildBottomNav(),
+                      )
+                    : bottomNav
+              : null,
         ),
       ),
     );
   }
-  
-    Widget? _buildBottomNav() {
-        useBottomNav = !_mainController.useSideBar && MediaQuery.sizeOf(context).isPortrait;
-        
-        if (!useBottomNav) return null;
-        if (_mainController.navigationBars.length <= 1) return const SizedBox.shrink();
-        
-        return _mainController.enableMYBar 
-            ? _buildModernNavigationBar()
-            : _buildTraditionalNavigationBar();
-    }
-
-    Widget _buildModernNavigationBar() {
-        return Obx(
-            () => NavigationBar(
-                maintainBottomViewPadding: true,
-                onDestinationSelected: _mainController.setIndex,
-                selectedIndex: _mainController.selectedIndex.value,
-                destinations: _mainController.navigationBars
-                    .map((e) => NavigationDestination(
-                        label: e.label,
-                        icon: _buildIcon(type: e),
-                        selectedIcon: _buildIcon(type: e, selected: true),
-                    ))
-                    .toList(),
-            ),
-        );
-    }
-
-    Widget _buildTraditionalNavigationBar() {
-        return Obx(
-            () => BottomNavigationBar(
-                currentIndex: _mainController.selectedIndex.value,
-                onTap: _mainController.setIndex,
-                iconSize: 16,
-                selectedFontSize: 12,
-                unselectedFontSize: 12,
-                type: BottomNavigationBarType.fixed,
-                items: _mainController.navigationBars
-                    .map((e) => BottomNavigationBarItem(
-                        label: e.label,
-                        icon: _buildIcon(type: e),
-                        activeIcon: _buildIcon(type: e, selected: true),
-                    ))
-                    .toList(),
-            ),
-        );
-    }
-
 
   Widget _buildIcon({
     required NavigationBarType type,
@@ -413,4 +410,3 @@ class _MainAppState
     );
   }
 }
-

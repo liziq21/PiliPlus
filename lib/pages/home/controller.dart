@@ -13,10 +13,8 @@ import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class HomeController
-    extends GetxController
-    with GetSingleTickerProviderStateMixin, ScrollOrRefreshMixin
-{
+class HomeController extends GetxController
+    with GetSingleTickerProviderStateMixin, ScrollOrRefreshMixin {
   late List<HomeTabType> tabs;
   late TabController tabController;
 
