@@ -15,7 +15,6 @@ import 'package:PiliPlus/utils/date_util.dart';
 import 'package:PiliPlus/utils/login_utils.dart';
 import 'package:PiliPlus/utils/page_utils.dart';
 import 'package:PiliPlus/utils/storage.dart';
-import 'package:PiliPlus/utils/update.dart';
 import 'package:PiliPlus/utils/utils.dart';
 import 'package:dio/dio.dart' show Headers;
 import 'package:document_file_save_plus/document_file_save_plus_platform_interface.dart';
@@ -148,7 +147,6 @@ class _AboutPageState extends State<AboutPage> {
           ),
           Obx(
             () => ListTile(
-              onTap: () => Update.checkUpdate(false),
               onLongPress: () => Utils.copyText(currentVersion.value),
               title: const Text('当前版本'),
               leading: const Icon(Icons.commit_outlined),

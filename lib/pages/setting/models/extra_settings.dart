@@ -29,7 +29,6 @@ import 'package:PiliPlus/utils/image_util.dart';
 import 'package:PiliPlus/utils/storage.dart';
 import 'package:PiliPlus/utils/storage_key.dart';
 import 'package:PiliPlus/utils/storage_pref.dart';
-import 'package:PiliPlus/utils/update.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
@@ -1166,9 +1165,7 @@ List<SettingsModel> get extraSettings => [
     setKey: SettingBoxKey.autoUpdate,
     defaultVal: true,
     onChanged: (val) {
-      if (val) {
-        Update.checkUpdate(false);
-      }
+      
     },
   ),
 ];
