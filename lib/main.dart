@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:PiliPlus/build_config.dart';
+//import 'package:PiliPlus/build_config.dart';
 import 'package:PiliPlus/common/widgets/custom_toast.dart';
 import 'package:PiliPlus/http/init.dart';
 import 'package:PiliPlus/models/common/theme/theme_color_type.dart';
@@ -63,50 +63,9 @@ void main() async {
     displayType: SmartToastType.onlyRefresh,
   );
 
-  if (Pref.enableLog) {
-    // 异常捕获 logo记录
-    String buildConfig =
-        '''\n
-Build Time: ${DateUtil.format(BuildConfig.buildTime, format: DateUtil.longFormatDs)}
-Commit Hash: ${BuildConfig.commitHash}''';
-    final Catcher2Options debugConfig = Catcher2Options(
-      SilentReportMode(),
-      [
-        FileHandler(await LoggerUtils.getLogsPath()),
-        ConsoleHandler(
-          enableDeviceParameters: false,
-          enableApplicationParameters: false,
-          enableCustomParameters: true,
-        ),
-      ],
-      customParameters: {
-        'BuildConfig': buildConfig,
-      },
-    );
-
-    final Catcher2Options releaseConfig = Catcher2Options(
-      SilentReportMode(),
-      [
-        FileHandler(await LoggerUtils.getLogsPath()),
-        ConsoleHandler(
-          enableCustomParameters: true,
-        ),
-      ],
-      customParameters: {
-        'BuildConfig': buildConfig,
-      },
-    );
-
-    Catcher2(
-      debugConfig: debugConfig,
-      releaseConfig: releaseConfig,
-      runAppFunction: () {
-        runApp(const MyApp());
-      },
-    );
-  } else {
-    runApp(const MyApp());
-  }
+  
+  runApp(const MyApp());
+  
 
   // 小白条、导航栏沉浸
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);

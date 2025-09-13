@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:PiliPlus/build_config.dart';
+//import 'package:PiliPlus/build_config.dart';
 import 'package:PiliPlus/common/widgets/dialog/dialog.dart';
 import 'package:PiliPlus/common/widgets/list_tile.dart';
 import 'package:PiliPlus/pages/mine/controller.dart';
@@ -157,19 +157,6 @@ class _AboutPageState extends State<AboutPage> {
                 style: subTitleStyle,
               ),
             ),
-          ),
-          ListTile(
-            title: Text(
-              '''
-Build Time: ${DateUtil.format(BuildConfig.buildTime, format: DateUtil.longFormatDs)}
-Commit Hash: ${BuildConfig.commitHash}''',
-              style: const TextStyle(fontSize: 14),
-            ),
-            leading: const Icon(Icons.info_outline),
-            onTap: () => PageUtils.launchURL(
-              'https://github.com/bggRGjQaUbCoE/PiliPlus/commit/${BuildConfig.commitHash}',
-            ),
-            onLongPress: () => Utils.copyText(BuildConfig.commitHash),
           ),
           Divider(
             thickness: 1,
